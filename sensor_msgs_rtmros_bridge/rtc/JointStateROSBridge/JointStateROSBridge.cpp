@@ -19,7 +19,8 @@ RTC::ReturnCode_t JointStateROSBridge::onInitialize(){
   cnoid::BodyLoader bodyLoader;
 
   std::string fileName;
-  pnh.getParam("model",fileName);
+  pnh.getParam("model", fileName);
+  std::cerr << "fileName:" << fileName << std::endl;
   this->robot_vrml_ = bodyLoader.load(fileName);
   if(!this->robot_vrml_){
     std::cerr << "\x1b[31m[" << m_profile.instance_name << "] " << "failed to load model[" << fileName << "]" << "\x1b[39m" << std::endl;
@@ -29,7 +30,7 @@ RTC::ReturnCode_t JointStateROSBridge::onInitialize(){
   m_qROS_.data.length(robot_vrml_->numJoints());
   for(int i=0;i<robot_vrml_->numJoints();i++) m_qROS_.data[i] = 0.0;
 
-  sub_ = pnh.subscribe("input", 1, &JointStateROSBridge::topicCb, this);
+  sub_ = pnh.subscribe("input", 1, &JointStateROSBridge::topicCb, this); // "input"のところがtopic名、launchファイルでremapしておく
   pub_ = pnh.advertise<sensor_msgs::JointState>("output", 1);
 
   return RTC::RTC_OK;
